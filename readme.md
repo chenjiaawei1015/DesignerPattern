@@ -1,6 +1,9 @@
-# 目录
+# 目录 #
 
-### demo1 单例模式
+### demo1 单例模式 ###
+
+![](https://i.imgur.com/AXS6jfS.png)
+
 1. 恶汉模式
 
 		public class Person1 {
@@ -98,3 +101,114 @@
 		    }
 		}
 
+### demo2 建造者模式 ###
+
+![](https://i.imgur.com/svEDWTc.png)
+
+1. Product -- 抽象产品类
+
+		public abstract class Computer {
+
+		    // 主机
+		    protected String mBoard;
+		    // 显示器
+		    protected String mDisplay;
+		    // 操作系统
+		    protected String mOs;
+
+		    protected Computer() {
+		    }
+
+		    public void setBoard(String board) {
+		        mBoard = board;
+		    }
+
+		    public void setDisplay(String display) {
+		        mDisplay = display;
+		    }
+
+		    public abstract void setOs();
+		}
+
+2. 产品实体类
+
+		public class MacBook extends Computer {
+
+		    @Override
+		    public void setOs() {
+		        mOs = "Mac OS X 10.10";
+		    }
+		}
+
+3. Builder -- 抽象Builder类,规范产品的组件
+
+		public abstract class Builder {
+
+		    // 设置主机
+		    public abstract void buildBoard(String board);
+
+		    // 设置显示器
+		    public abstract void buildDisplay(String display);
+
+		    // 设置操作系统
+		    public abstract void buildOs();
+
+		    // 创建电脑
+		    public abstract Computer create();
+		}
+
+4. ConcreateBuilder -- 具体的Builder类,负责具体的组件过程
+
+		public class MacBookBuilder extends Builder {
+
+		    private Computer mComputer = new MacBook();
+
+		    @Override
+		    public void buildBoard(String board) {
+		        mComputer.setBoard(board);
+		    }
+
+		    @Override
+		    public void buildDisplay(String display) {
+		        mComputer.setDisplay(display);
+		    }
+
+		    @Override
+		    public void buildOs() {
+		        mComputer.setOs();
+		    }
+
+		    @Override
+		    public Computer create() {
+		        return mComputer;
+		    }
+		}
+
+5. Director -- 统一组装过程
+
+		public class Director {
+
+		    private Builder mBuilder;
+
+		    public Director(Builder builder) {
+		        mBuilder = builder;
+		    }
+
+		    public Computer construct(String board, String display) {
+		        mBuilder.buildBoard(board);
+		        mBuilder.buildDisplay(display);
+		        mBuilder.buildOs();
+		        return mBuilder.create();
+		    }
+		}
+
+6. 测试类
+
+		public class Test {
+
+		    public static void main(String[] args) {
+		        Builder builder = new MacBookBuilder();
+		        Director director = new Director(builder);
+		        Computer computer = director.construct("英特尔主机", "三星显示器");
+		    }
+		}
