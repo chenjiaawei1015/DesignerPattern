@@ -244,3 +244,137 @@
 	    }
 	}
 
+### demo4 工厂方法模式 ###
+
+![](https://i.imgur.com/XwW32FH.png)
+
+1. 静态工厂模式/简单工厂模式
+
+	1.1 产品抽象类
+
+		public abstract class Product {
+
+		    // 产品类的抽象方法,由具体的产品类进行实现
+		    public abstract void showProductName();
+		}
+
+	1.2 具体产品类
+
+		public class ConcreateProductA extends Product {
+
+		    @Override
+		    public void showProductName() {
+		        System.out.println("Product A");
+		    }
+		}
+
+		public class ConcreateProductB extends Product {
+
+		    @Override
+		    public void showProductName() {
+		        System.out.println("Product B");
+		    }
+		}
+
+	1.3 工厂抽象
+
+		public abstract class Factory {
+
+		    // 创建产品
+		    public abstract Product createProduct();
+		}
+
+	1.4 工厂实体
+
+		public class ConcreateFactory extends Factory {
+
+		    @Override
+		    public Product createProduct() {
+		        // 生产具体的产品
+		        return new ConcreateProductA();
+		        // return new ConcreateProductB();
+		    }
+		}
+
+	1.5 测试
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Factory factory = new ConcreateFactory();
+		        Product product = factory.createProduct();
+		        product.showProductName();
+		    }
+		}
+
+2. 静态工厂模式/简单工厂模式的变种
+
+	2.1 工厂抽象
+
+		public abstract class Factory {
+
+		    // 创建产品
+		    public abstract <T extends Product> T createProduct(Class<T> clazz);
+		}
+
+	2.2 工厂具体
+
+		public class ConcreateFactory extends Factory {
+
+		    @Override
+		    public <T extends Product> T createProduct(Class<T> clazz) {
+		        Product p = null;
+		        try {
+		            p = (Product) Class.forName(clazz.getName()).newInstance();
+		        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+		            e.printStackTrace();
+		        }
+		        return (T) p;
+		    }
+		}
+
+	2.3 测试
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Factory factory = new ConcreateFactory();
+		        Product product = factory.createProduct(ConcreateProductB.class);
+		        product.showProductName();
+		    }
+		}
+
+3. 多工厂模式
+
+	3.1 方式1的变种,每个产品对应着一个工厂类
+
+		public class ConcreateFactoryA extends Factory {
+
+		    @Override
+		    public Product createProduct() {
+		        return new ConcreateProductA();
+		    }
+		}
+
+		public class ConcreateFactoryB extends Factory {
+
+		    @Override
+		    public Product createProduct() {
+		        return new ConcreateProductB();
+		    }
+		}
+
+	3.2 测试
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Factory factory = new ConcreateFactoryA();
+		        Product product = factory.createProduct();
+		        product.showProductName();
+
+		        factory = new ConcreateFactoryB();
+		        product = factory.createProduct();
+		        product.showProductName();
+		    }
+		}
