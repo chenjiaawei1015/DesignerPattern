@@ -212,3 +212,35 @@
 		        Computer computer = director.construct("英特尔主机", "三星显示器");
 		    }
 		}
+
+### demo3 原型模式 ###
+
+![](https://i.imgur.com/Wj5OXen.png)
+
+	public class Person implements Cloneable {
+
+	    public String name;
+	    public ArrayList<Person> friendList;
+
+	    @Override
+	    public Person clone() throws CloneNotSupportedException {
+	        return shallowCopy();
+	    }
+
+	    /**
+	     * 浅拷贝
+	     */
+	    private Person shallowCopy() throws CloneNotSupportedException {
+	        return (Person) super.clone();
+	    }
+
+	    /**
+	     * 深拷贝
+	     */
+	    private Person deepCopy() throws CloneNotSupportedException {
+	        Person person = (Person) super.clone();
+	        person.friendList = (ArrayList<Person>) friendList.clone();
+	        return person;
+	    }
+	}
+
