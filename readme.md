@@ -378,3 +378,108 @@
 		        product.showProductName();
 		    }
 		}
+
+### demo5 抽象工厂模式 ###
+
+![](https://i.imgur.com/7YjCypT.png)
+
+1.1 AbstractProduct -- 抽象产品
+
+	public abstract class AbstractProductA {
+
+	    // 每个具体产品需要实现的方法
+	    public abstract void method();
+	}
+
+	public abstract class AbstractProductB {
+
+	    // 每个具体产品需要实现的方法
+	    public abstract void method();
+	}
+
+1.2 ConcreateProduct -- 具体产品
+
+	public class ConcreateProductA1 extends AbstractProductA {
+
+	    @Override
+	    public void method() {
+	        System.out.println("product A1");
+	    }
+	}
+
+	public class ConcreateProductA2 extends AbstractProductA {
+
+	    @Override
+	    public void method() {
+	        System.out.println("product A2");
+	    }
+	}
+
+	public class ConcreateProductB1 extends AbstractProductB {
+
+	    @Override
+	    public void method() {
+	        System.out.println("product B1");
+	    }
+	}
+
+	public class ConcreateProductB2 extends AbstractProductB {
+
+	    @Override
+	    public void method() {
+	        System.out.println("product B2");
+	    }
+	}
+
+1.3 AbstractFactory -- 抽象工厂
+
+	public abstract class AbstractFactory {
+
+	    // 创建产品A
+	    public abstract AbstractProductA createProductA();
+
+	    // 创建产品B
+	    public abstract AbstractProductB createProductB();
+	}
+
+1.4 ConcreateFactory -- 具体工厂
+
+	public class ConcreateFactory1 extends AbstractFactory {
+
+	    @Override
+	    public AbstractProductA createProductA() {
+	        return new ConcreateProductA1();
+	    }
+
+	    @Override
+	    public AbstractProductB createProductB() {
+	        return new ConcreateProductB1();
+	    }
+	}
+
+	public class ConcreateFactory2 extends AbstractFactory {
+
+	    @Override
+	    public AbstractProductA createProductA() {
+	        return new ConcreateProductA2();
+	    }
+
+	    @Override
+	    public AbstractProductB createProductB() {
+	        return new ConcreateProductB2();
+	    }
+	}
+
+1.5 测试
+
+	public class Client {
+
+	    public static void main(String[] args) {
+
+	        AbstractFactory factory = new ConcreateFactory1();
+	        AbstractProductA productA = factory.createProductA();
+	        AbstractProductB productB = factory.createProductB();
+	        productA.method();
+	        productB.method();
+	    }
+	}
