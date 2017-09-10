@@ -1,6 +1,6 @@
 # 目录 #
 
-### demo1 单例模式 ###
+## demo1 单例模式 ##
 
 ![](https://i.imgur.com/AXS6jfS.png)
 
@@ -101,7 +101,7 @@
 		    }
 		}
 
-### demo2 建造者模式 ###
+## demo2 建造者模式 ##
 
 ![](https://i.imgur.com/svEDWTc.png)
 
@@ -213,7 +213,7 @@
 	    }
 	}
 
-### demo3 原型模式 ###
+## demo3 原型模式 ##
 
 ![](https://i.imgur.com/Wj5OXen.png)
 
@@ -244,7 +244,7 @@
 	    }
 	}
 
-### demo4 工厂方法模式 ###
+## demo4 工厂方法模式 ##
 
 ![](https://i.imgur.com/XwW32FH.png)
 
@@ -379,7 +379,7 @@
 		    }
 		}
 
-### demo5 抽象工厂模式 ###
+## demo5 抽象工厂模式 ##
 
 ![](https://i.imgur.com/7YjCypT.png)
 
@@ -484,7 +484,7 @@
 	    }
 	}
 
-### demo6 策略模式 ###
+## demo6 策略模式 ##
 
 ![](https://i.imgur.com/RtX1iPK.png)
 
@@ -543,7 +543,7 @@
 	    }
 	}
 
-### demo7 状态模式 ###
+## demo7 状态模式 ##
 
 ![](https://i.imgur.com/SDWTyW2.png)
 
@@ -622,7 +622,7 @@
 	    }
 	}
 
-### demo8 责任链模式 ###
+## demo8 责任链模式 ##
 
 ![](https://i.imgur.com/aSLWlUM.png)
 
@@ -702,3 +702,163 @@
 	        // B work
 	    }
 	}
+
+## demo9 解释器模式 ##
+
+![](https://i.imgur.com/HxbF4xl.png)
+
+1. 角色介绍
+
+    AbstractExpression -- 抽象表达式.声明一个抽象的解释操作父类,并定义一个抽象的解释方法,其具体的实现在各个子类解释器中完成
+
+	TerminalExpression -- 终结符表达式.实现文法中与终结符有关的解释操作.文法中的每一个终结符都有一个具体的终结表达式与之对应
+
+	NonterminalExpression -- 非终结符表达式.实现文法中与非终结符有关的解释操作
+
+	Context -- 上下文环境类
+
+	Client -- 客户类.解析表达式,构建抽象语法树,执行具体的解释操作等
+
+2. 实现计算器的加减法
+
+	2.1 AbstractExpression
+
+		/**
+		 * 抽象算数运算解释器
+		 */
+		public abstract class ArithmeticExpression {
+
+		    // 抽象解析方法
+		    public abstract int interpreter();
+		}
+
+	2.2 TerminalExpression
+
+		/**
+		 * 数字解释器
+		 */
+		public class NumExpression extends ArithmeticExpression {
+
+		    private int mNum;
+
+		    public NumExpression(int num) {
+		        this.mNum = num;
+		    }
+
+		    @Override
+		    public int interpreter() {
+		        return this.mNum;
+		    }
+		}
+
+	2.3 NonterminalExpression
+
+		/**
+		 * 运算符号抽象解释器
+		 */
+		public abstract class OperatorExpression extends ArithmeticExpression {
+
+		    // 存储运算符号两边的数字解释器
+		    protected ArithmeticExpression mExp1, mExp2;
+
+		    public OperatorExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+		        mExp1 = exp1;
+		        mExp2 = exp2;
+		    }
+		}
+
+		/**
+		 * 加法运算抽象解释器
+		 */
+		public class AdditionExpression extends OperatorExpression {
+
+		    public AdditionExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+		        super(exp1, exp2);
+		    }
+
+		    @Override
+		    public int interpreter() {
+		        return mExp1.interpreter() + mExp2.interpreter();
+		    }
+		}
+
+		/**
+		 * 减法运算抽象解释器
+		 */
+		public class SubtractionExpression extends OperatorExpression {
+
+		    public SubtractionExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+		        super(exp1, exp2);
+		    }
+
+		    @Override
+		    public int interpreter() {
+		        return mExp1.interpreter() - mExp2.interpreter();
+		    }
+		}
+
+	2.4 Client
+
+		/**
+		 * 处理和解释相关的一些业务
+		 */
+		public class Calculator {
+
+		    private Stack<ArithmeticExpression> mExpStack = new Stack<>();
+
+		    public Calculator(String expression) {
+		        // 两个临时变量,存储运算符左右两边的解释器
+		        ArithmeticExpression exp1, exp2;
+
+		        // 根据空格分割表达式字符串
+		        String[] elements = expression.split(" ");
+
+		        for (int i = 0; i < elements.length; i++) {
+		            // 判断运算符号
+		            switch (elements[i].charAt(0)) {
+		                case '+':
+		                    // 加号运算符
+		                    // 将栈中的解释器弹出作为运算符左边的解释器
+		                    exp1 = mExpStack.pop();
+		                    // 将运算符号数组下标下一个元素构造为一个数字解释器
+		                    exp2 = new NumExpression(Integer.valueOf(elements[++i]));
+		                    // 通过上面两个数字解释器构造加号运算解释器
+		                    mExpStack.push(new AdditionExpression(exp1, exp2));
+		                    break;
+
+		                case '-':
+							// 减号运算符
+		                    // 将栈中的解释器弹出作为运算符左边的解释器
+		                    exp1 = mExpStack.pop();
+		                    // 将运算符号数组下标下一个元素构造为一个数字解释器
+		                    exp2 = new NumExpression(Integer.valueOf(elements[++i]));
+		                    // 通过上面两个数字解释器构造减号运算解释器
+		                    mExpStack.push(new SubtractionExpression(exp1, exp2));
+		                    break;
+
+		                default:
+		                    // 为数字
+		                    // 直接构造数字解释器并压入堆栈
+		                    mExpStack.push(new NumExpression(Integer.valueOf(elements[i])));
+		                    break;
+		            }
+		        }
+		    }
+
+		    // 计算最终结果
+		    public int calculate() {
+		        return mExpStack.pop().interpreter();
+		    }
+		}
+
+	2.5 测试类
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Calculator calculator = new Calculator("10 + 15 - 5 - 10 + 20");
+		        int num = calculator.calculate();
+		        System.out.println(num);
+		    }
+		}
+
