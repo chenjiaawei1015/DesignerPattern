@@ -513,7 +513,7 @@
 	    }
 	}
 
-1.3 执行者
+1.3 Context -- 环境类,内部维护一个Strategy的实例
 
 	public class Travel {
 
@@ -543,3 +543,81 @@
 	    }
 	}
 
+### demo7 状态模式 ###
+
+![](https://i.imgur.com/SDWTyW2.png)
+
+1.1 State -- 状态接口
+
+	public interface TvState {
+
+	    // 切换频道
+	    void changeChannel();
+	}
+
+1.2 ConcreateState -- 具体状态类
+
+	public class PowerOffState implements TvState {
+
+	    @Override
+	    public void changeChannel() {
+	    }
+	}
+
+	public class PowerOnState implements TvState {
+
+	    @Override
+	    public void changeChannel() {
+	        System.out.println("change channel");
+	    }
+	}
+
+1.3 Context --环境类,维护State的实例
+
+	public interface PowerController {
+
+	    // 开机
+	    void powerOn();
+
+	    // 关机
+	    void powerOff();
+	}
+
+	public class TvController implements PowerController {
+
+	    // 默认关机状态
+	    private TvState mTvState = new PowerOffState();
+
+	    @Override
+	    public void powerOn() {
+	        mTvState = new PowerOnState();
+	        System.out.println("power on");
+	    }
+
+	    @Override
+	    public void powerOff() {
+	        mTvState = new PowerOffState();
+	        System.out.println("power off");
+	    }
+
+	    // 下一个频道
+	    public void changeChannel() {
+	        mTvState.changeChannel();
+	    }
+	}
+
+1.4 测试
+
+	public class Client {
+
+	    public static void main(String[] args) {
+	        TvController controller = new TvController();
+	        controller.changeChannel();
+
+	        controller.powerOn();
+	        controller.changeChannel();
+
+	        controller.powerOff();
+	        controller.changeChannel();
+	    }
+	}
