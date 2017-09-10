@@ -621,3 +621,84 @@
 	        controller.changeChannel();
 	    }
 	}
+
+### demo8 责任链模式 ###
+
+![](https://i.imgur.com/aSLWlUM.png)
+
+1.1 Handler -- 抽象处理者
+
+	public abstract class Handler {
+
+	    // 设置下一级的处理者
+	    protected Handler mNextHandler;
+
+	    public void setNextHandler(Handler nextHandler) {
+	        mNextHandler = nextHandler;
+	    }
+
+	    // 处理请求
+	    public abstract <T extends Handler> void handleRequest(Class<T> condition);
+	}
+
+1.2 ConcreateHandler -- 具体处理者
+
+	public class ConcreateHandlerA extends Handler {
+
+	    @Override
+	    public <T extends Handler> void handleRequest(Class<T> condition) {
+	        if (condition.getName().equalsIgnoreCase(ConcreateHandlerA.class.getName())) {
+	            System.out.println("A work");
+	        } else {
+	            if (mNextHandler != null) {
+	                mNextHandler.handleRequest(condition);
+	            } else {
+	                System.out.println("A work");
+	            }
+	        }
+	    }
+	}
+
+	public class ConcreateHandlerB extends Handler {
+
+	    @Override
+	    public <T extends Handler> void handleRequest(Class<T> condition) {
+	        if (condition.getName().equalsIgnoreCase(ConcreateHandlerB.class.getName())) {
+	            System.out.println("B work");
+	        } else {
+	            if (mNextHandler != null) {
+	                mNextHandler.handleRequest(condition);
+	            } else {
+	                System.out.println("B work");
+	            }
+	        }
+	    }
+	}
+
+1.3 测试类
+
+	public class Client {
+
+	    public static void main(String[] args) {
+	        Handler handlerA = new ConcreateHandlerA();
+	        Handler handlerB = new ConcreateHandlerB();
+	        Handler handlerC = new Handler() {
+	            @Override
+	            public <T extends Handler> void handleRequest(Class<T> condition) {
+	                System.out.println("C work");
+	            }
+	        };
+
+	        // 设置下一级
+	        handlerA.setNextHandler(handlerB);
+
+	        handlerA.handleRequest(handlerA.getClass());
+	        handlerA.handleRequest(handlerB.getClass());
+	        handlerA.handleRequest(handlerC.getClass());
+
+	        // 输出
+	        // A work
+	        // B work
+	        // B work
+	    }
+	}
