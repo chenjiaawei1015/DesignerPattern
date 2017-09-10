@@ -105,113 +105,113 @@
 
 ![](https://i.imgur.com/svEDWTc.png)
 
-1. Product -- 抽象产品类
+1.1 Product -- 抽象产品类
 
-		public abstract class Computer {
+	public abstract class Computer {
 
-		    // 主机
-		    protected String mBoard;
-		    // 显示器
-		    protected String mDisplay;
-		    // 操作系统
-		    protected String mOs;
+	    // 主机
+	    protected String mBoard;
+	    // 显示器
+	    protected String mDisplay;
+	    // 操作系统
+	    protected String mOs;
 
-		    protected Computer() {
-		    }
+	    protected Computer() {
+	    }
 
-		    public void setBoard(String board) {
-		        mBoard = board;
-		    }
+	    public void setBoard(String board) {
+	        mBoard = board;
+	    }
 
-		    public void setDisplay(String display) {
-		        mDisplay = display;
-		    }
+	    public void setDisplay(String display) {
+	        mDisplay = display;
+	    }
 
-		    public abstract void setOs();
-		}
+	    public abstract void setOs();
+	}
 
-2. 产品实体类
+1.2 产品实体类
 
-		public class MacBook extends Computer {
+	public class MacBook extends Computer {
 
-		    @Override
-		    public void setOs() {
-		        mOs = "Mac OS X 10.10";
-		    }
-		}
+	    @Override
+	    public void setOs() {
+	        mOs = "Mac OS X 10.10";
+	    }
+	}
 
-3. Builder -- 抽象Builder类,规范产品的组件
+1.3 Builder -- 抽象Builder类,规范产品的组件
 
-		public abstract class Builder {
+	public abstract class Builder {
 
-		    // 设置主机
-		    public abstract void buildBoard(String board);
+	    // 设置主机
+	    public abstract void buildBoard(String board);
 
-		    // 设置显示器
-		    public abstract void buildDisplay(String display);
+	    // 设置显示器
+	    public abstract void buildDisplay(String display);
 
-		    // 设置操作系统
-		    public abstract void buildOs();
+	    // 设置操作系统
+	    public abstract void buildOs();
 
-		    // 创建电脑
-		    public abstract Computer create();
-		}
+	    // 创建电脑
+	    public abstract Computer create();
+	}
 
-4. ConcreateBuilder -- 具体的Builder类,负责具体的组件过程
+1.4 ConcreateBuilder -- 具体的Builder类,负责具体的组件过程
 
-		public class MacBookBuilder extends Builder {
+	public class MacBookBuilder extends Builder {
 
-		    private Computer mComputer = new MacBook();
+	    private Computer mComputer = new MacBook();
 
-		    @Override
-		    public void buildBoard(String board) {
-		        mComputer.setBoard(board);
-		    }
+	    @Override
+	    public void buildBoard(String board) {
+	        mComputer.setBoard(board);
+	    }
 
-		    @Override
-		    public void buildDisplay(String display) {
-		        mComputer.setDisplay(display);
-		    }
+	    @Override
+	    public void buildDisplay(String display) {
+	        mComputer.setDisplay(display);
+	    }
 
-		    @Override
-		    public void buildOs() {
-		        mComputer.setOs();
-		    }
+	    @Override
+	    public void buildOs() {
+	        mComputer.setOs();
+	    }
 
-		    @Override
-		    public Computer create() {
-		        return mComputer;
-		    }
-		}
+	    @Override
+	    public Computer create() {
+	        return mComputer;
+	    }
+	}
 
-5. Director -- 统一组装过程
+1.5 Director -- 统一组装过程
 
-		public class Director {
+	public class Director {
 
-		    private Builder mBuilder;
+	    private Builder mBuilder;
 
-		    public Director(Builder builder) {
-		        mBuilder = builder;
-		    }
+	    public Director(Builder builder) {
+	        mBuilder = builder;
+	    }
 
-		    public Computer construct(String board, String display) {
-		        mBuilder.buildBoard(board);
-		        mBuilder.buildDisplay(display);
-		        mBuilder.buildOs();
-		        return mBuilder.create();
-		    }
-		}
+	    public Computer construct(String board, String display) {
+	        mBuilder.buildBoard(board);
+	        mBuilder.buildDisplay(display);
+	        mBuilder.buildOs();
+	        return mBuilder.create();
+	    }
+	}
 
-6. 测试类
+1.6 测试类
 
-		public class Test {
+	public class Test {
 
-		    public static void main(String[] args) {
-		        Builder builder = new MacBookBuilder();
-		        Director director = new Director(builder);
-		        Computer computer = director.construct("英特尔主机", "三星显示器");
-		    }
-		}
+	    public static void main(String[] args) {
+	        Builder builder = new MacBookBuilder();
+	        Director director = new Director(builder);
+	        Computer computer = director.construct("英特尔主机", "三星显示器");
+	    }
+	}
 
 ### demo3 原型模式 ###
 
@@ -483,3 +483,63 @@
 	        productB.method();
 	    }
 	}
+
+### demo6 策略模式 ###
+
+![](https://i.imgur.com/RtX1iPK.png)
+
+1.1 Strategy -- 策略
+
+	public interface IPriceStrategy {
+
+	    int calculatePrice(int millis);
+	}
+
+1.2 ConcreateStrategy -- 具体策略
+
+	public class BicyclerStrategy implements IPriceStrategy {
+
+	    @Override
+	    public int calculatePrice(int millis) {
+	        return millis;
+	    }
+	}
+
+	public class BusStrategy implements IPriceStrategy {
+
+	    @Override
+	    public int calculatePrice(int millis) {
+	        return 2 * millis;
+	    }
+	}
+
+1.3 执行者
+
+	public class Travel {
+
+	    private IPriceStrategy mPriceStrategy;
+
+	    public Travel(IPriceStrategy priceStrategy) {
+	        mPriceStrategy = priceStrategy;
+	    }
+
+	    public int calculatePrice(int millis) {
+	        return mPriceStrategy.calculatePrice(millis);
+	    }
+	}
+
+1.4 测试
+
+	public class Client {
+
+	    public static void main(String[] args) {
+	        Travel travel = new Travel(new BusStrategy());
+	        int price = travel.calculatePrice(10);
+	        System.out.println(price);
+
+	        travel = new Travel(new BicyclerStrategy());
+	        price = travel.calculatePrice(10);
+	        System.out.println(price);
+	    }
+	}
+
