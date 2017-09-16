@@ -862,3 +862,91 @@
 		    }
 		}
 
+## demo10 命令模式 ##
+
+![](https://i.imgur.com/MlreLNL.png)
+
+1. 角色介绍
+
+	Receiver -- 接收者角色.这个类负责具体实施或执行一个请求
+
+	Command -- 命令角色.定义所有具体命令类的抽象接口
+
+	ConcreteCommand -- 具体命令角色.这个类实现了 Command 接口,在 execute 方法中调用接收者角色的相关方法,在接收者和命令执行的具体行为之间加以弱耦合
+
+	Invoker -- 请求者角色.职责是调用命令对象执行的具体请求
+
+	Client -- 客户端角色
+
+2. 模板代码
+
+	2.1 接收者
+
+		public class Receiver {
+
+		    // 真正执行具体命令逻辑的方法
+		    public void action() {
+		        System.out.println("执行具体操作");
+		    }
+		}
+
+	2.2 抽象命令接口
+
+		public interface Command {
+
+		    // 执行具体操作的命令
+		    void execute();
+		}
+
+	2.3 具体命令类
+
+		public class ConcreteCommand implements Command {
+
+		    // 持有一个对接收者对象的引用
+		    private Receiver mReceiver;
+
+		    public ConcreteCommand(Receiver receiver) {
+		        mReceiver = receiver;
+		    }
+
+		    @Override
+		    public void execute() {
+		        // 调用接收者的相关方法来执行具体逻辑
+		        mReceiver.action();
+		    }
+		}
+
+	2.4 请求者类
+
+		public class Invoker {
+
+		    // 持有一个对相应命令对象的引用
+		    private Command mCommand;
+
+		    public Invoker(Command command) {
+		        mCommand = command;
+		    }
+
+		    public void action() {
+		        // 调用具体命令对象的相关方法,执行具体命令
+		        mCommand.execute();
+		    }
+		}
+
+	2.5 客户类
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        // 构造一个接收者对象
+		        Receiver receiver = new Receiver();
+		        // 根据接收者对象构造命令对象
+		        Command command = new ConcreteCommand(receiver);
+		        // 根据具体的对象构造请求者对象
+		        Invoker invoker = new Invoker(command);
+		        // 执行请求方法
+		        invoker.action();
+		    }
+		}
+
+
