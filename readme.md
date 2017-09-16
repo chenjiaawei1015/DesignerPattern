@@ -1506,3 +1506,54 @@
 		        mediator.method();
 		    }
 		}
+
+## demo17 代理模式 ##
+
+![](https://i.imgur.com/qgVW7gE.png)
+
+1. 角色介绍
+
+	Subject -- 抽象主题类.主要职责是声明真实主题与代理的共同接口方法
+
+	RealSubject -- 真实主题类
+
+	ProxySubject -- 代理类
+
+	Client -- 客户类
+
+2. 代码
+
+		public abstract class Subject {
+
+		    public abstract void visit();
+		}
+
+		public class RealSubject extends Subject {
+		    @Override
+		    public void visit() {
+		        System.out.println("real subject");
+		    }
+		}
+
+		public class ProxySubject extends Subject {
+
+		    private RealSubject mRealSubject;
+
+		    public ProxySubject(RealSubject realSubject) {
+		        mRealSubject = realSubject;
+		    }
+
+		    @Override
+		    public void visit() {
+		        mRealSubject.visit();
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Subject subject = new RealSubject();
+		        Subject proxySubject = new ProxySubject((RealSubject) subject);
+		        proxySubject.visit();
+		    }
+		}
