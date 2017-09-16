@@ -1016,3 +1016,90 @@
 		        System.out.println(object);
 		    }
 		}
+
+## demo12 备忘录模式 ##
+
+![](https://i.imgur.com/dDosfW4.png)
+
+1. 角色关系
+
+	Originator -- 负责创建一个备忘录,记录恢复自身内部状态.同时 Originator 还可以根据需要决定 Memento 自身的哪些内部状态
+
+	Memento -- 备忘录角色,用于存储 Originator 的内部状态,并且可以防止 Originator 以外的对象访问 Memoto
+
+	Caretaker -- 负责存储备忘录,不能对备忘录的内容进行操作和访问,只能够将备忘录传递给其他对象
+
+2. 简单模板
+
+    	public class Originator {
+
+		    private String state;
+
+		    public Memento createMemento() {
+		        return new Memento(state);
+		    }
+
+		    public void restoreMemento(Memento memento) {
+		        this.state = memento.getState();
+		    }
+
+		    public String getState() {
+		        return state;
+		    }
+
+		    public void setState(String state) {
+		        this.state = state;
+		        System.out.println("当前状态：" + this.state);
+		    }
+		}
+
+		public class Memento {
+
+		    private String state;
+
+		    public Memento(String state){
+		        this.state = state;
+		    }
+
+		    public String getState() {
+		        return state;
+		    }
+
+		    public void setState(String state) {
+		        this.state = state;
+		    }
+		}
+
+		public class Caretaker {
+
+		    private Memento memento;
+
+		    public Memento retrieveMemento() {
+		        return this.memento;
+		    }
+
+		    public void saveMemento(Memento memento) {
+		        this.memento = memento;
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Originator o = new Originator();
+		        Caretaker c = new Caretaker();
+
+		        o.setState("On");
+		        c.saveMemento(o.createMemento());
+
+		        o.setState("Off");
+		        o.restoreMemento(c.retrieveMemento());
+
+		        System.out.println(o.getState());
+
+		        // 输出结果:
+		        // 当前状态：On
+		        // 当前状态：Off
+		        // On
+		    }
+		}
