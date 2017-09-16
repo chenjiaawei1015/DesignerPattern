@@ -1405,4 +1405,104 @@
 		    }
 		}
 
+## demo16 中介者模式 ##
 
+![](https://i.imgur.com/eYCq1Nw.png)
+
+1. 角色介绍
+
+	Mediator -- 抽象中介者角色,定义了同事对象到中介者对象的接口,一般以抽象类的方式实现
+
+	ConcreteMediator -- 具体中介者角色.从具体的同事对象接收消息,向具体的同事对象发出命令
+
+	Colleague -- 抽象同事类角色,定义了中介者对象的接口,它只知道中介者而不知道其他的同事对象
+
+	ConcreteColleague -- 具体的同事类对象,都知道本身在小范围内的行为,不知道它在大范围内的目的
+
+2. 代码
+
+		/**
+		 * 抽象中介者
+		 */
+		public abstract class Mediator {
+
+		    protected Colleague mColleagueA;
+		    protected Colleague mColleagueB;
+
+		    public void setColleagueA(ConcreteColleagueA colleagueA) {
+		        mColleagueA = colleagueA;
+		    }
+
+		    public void setColleagueB(ConcreteColleagueB colleagueB) {
+		        mColleagueB = colleagueB;
+		    }
+
+		    public abstract void method();
+		}
+
+		/**
+		 * 具体中介者
+		 */
+		public class ConcreteMediator extends Mediator {
+
+		    @Override
+		    public void method() {
+		        mColleagueA.action();
+		        mColleagueB.action();
+		    }
+		}
+
+		/**
+		 * 抽象同事
+		 */
+		public abstract class Colleague {
+
+		    // 中介者对象
+		    protected Mediator mMediator;
+
+		    public Colleague(Mediator mediator) {
+		        mMediator = mediator;
+		    }
+
+		    // 同事具体的行为
+		    public abstract void action();
+		}
+
+		public class ConcreteColleagueA extends Colleague {
+
+		    public ConcreteColleagueA(Mediator mediator) {
+		        super(mediator);
+		    }
+
+		    @Override
+		    public void action() {
+		        System.out.println("A action");
+		    }
+		}
+
+		public class ConcreteColleagueB extends Colleague {
+
+		    public ConcreteColleagueB(Mediator mediator) {
+		        super(mediator);
+		    }
+
+		    @Override
+		    public void action() {
+		        System.out.println("B action");
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Mediator mediator = new ConcreteMediator();
+
+		        Colleague colleagueA = new ConcreteColleagueA(mediator);
+		        Colleague colleagueB = new ConcreteColleagueB(mediator);
+
+		        mediator.setColleagueA((ConcreteColleagueA) colleagueA);
+		        mediator.setColleagueB((ConcreteColleagueB) colleagueB);
+
+		        mediator.method();
+		    }
+		}
