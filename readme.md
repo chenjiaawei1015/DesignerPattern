@@ -1207,3 +1207,47 @@
 		        }
 		    }
 		}
+
+## demo14 模板方法模式 ##
+
+![](https://i.imgur.com/Dqq1tU3.png)
+
+1. 角色介绍
+
+	AbsTemplate -- 抽象类,定义一套算法框架
+	ConcreateClass -- 具体实现类
+
+2. 模板代码
+
+		public abstract class AbsTemplate {
+
+		    abstract void stepOne();
+
+		    abstract void stepTwo();
+
+		    void execute() {
+		        stepOne();
+		        stepTwo();
+		    }
+		}
+
+		public class ConcreteImplA extends AbsTemplate {
+
+		    @Override
+		    void stepOne() {
+		        System.out.println("A one");
+		    }
+
+		    @Override
+		    void stepTwo() {
+		        System.out.println("A two");
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        AbsTemplate template = new ConcreteImplA();
+		        template.execute();
+		    }
+		}
