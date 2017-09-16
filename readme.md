@@ -949,4 +949,70 @@
 		    }
 		}
 
+### demo11 观察者模式 ###
 
+![](https://i.imgur.com/B0xH516.png)
+
+1. 角色关系
+
+	Subject -- 抽象主题,也就是被观察者角色.抽象主题负责把所有观察者对象的引用保存到一个集合中,每个主题都可以有任意数量的观察者,主要提供一个接口,可以增加和删除观察者对象
+
+	ConcreteSubject -- 具体主题,该角色将有关状态存入具体观察者对象,在具体主题的内部状态发生改变时,给所有注册过的观察者发送通知
+
+	Observer -- 抽象观察者,是观察者的抽象类,定义了一个接口,使得在得到主题的更改通知时更新自己
+
+	ConcreteObserver -- 具体观察者
+
+2. 模板代码
+
+	2.1 Subject
+
+		public abstract class Subject {
+
+		    abstract void notifyObservers(Object object);
+
+		    abstract void addObserver(Observer observer);
+
+		    abstract void removeObserver(Observer observer);
+		}
+
+	2.2 ConcreateSubject
+
+		public class ConcreteSubject extends Subject {
+
+		    private List<Observer> mObserverList = new ArrayList<>();
+
+		    @Override
+		    void notifyObservers(Object object) {
+		        for (Observer observer : mObserverList) {
+		            observer.update(object);
+		        }
+		    }
+
+		    @Override
+		    void addObserver(Observer observer) {
+		        mObserverList.add(observer);
+		    }
+
+		    @Override
+		    void removeObserver(Observer observer) {
+		        mObserverList.remove(observer);
+		    }
+		}
+
+	2.3 Observer
+
+		public interface Observer {
+
+		    void update(Object object);
+		}
+
+	2.4 ConcreateObserver
+
+		public class ConcreteObserver implements Observer {
+
+		    @Override
+		    public void update(Object object) {
+		        System.out.println(object);
+		    }
+		}
