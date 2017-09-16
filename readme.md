@@ -1103,3 +1103,107 @@
 		        // On
 		    }
 		}
+
+## demo13 迭代器模式 ##
+
+![](https://i.imgur.com/faAnpqw.png)
+
+1. 角色关系
+
+	Iterator -- 迭代器接口.负责定义,访问和遍历元素的接口
+
+	Concrete Iterator -- 具体迭代器类,记录遍历的当前位置
+
+	Aggregate -- 容器接口
+
+	Concrete Aggregate -- 具体容器类
+
+	Client -- 客户类
+
+2. 模板代码
+
+	2.1 迭代器接口
+
+		public interface Iterator<T> {
+
+		    boolean hasNext();
+
+		    T next();
+		}
+
+	2.2 具体迭代器类
+
+		public class ConcreteIterator<T> implements Iterator<T> {
+
+		    private List<T> mList = new ArrayList<>();
+		    private int mCursor = 0;
+
+		    public ConcreteIterator(List<T> list) {
+		        mList = list;
+		    }
+
+		    @Override
+		    public boolean hasNext() {
+		        return mCursor != mList.size();
+		    }
+
+		    @Override
+		    public T next() {
+		        T obj = null;
+		        if (this.hasNext()) {
+		            obj = this.mList.get(mCursor++);
+		        }
+		        return obj;
+		    }
+		}
+
+	2.3 容器接口
+
+		public interface Aggregate<T> {
+
+		    void add(T obj);
+
+		    void remove(T obj);
+
+		    Iterator<T> iterator();
+		}
+
+	2.4 具体容器类
+
+		public class ConcreteAggregate<T> implements Aggregate<T> {
+
+		    private List<T> mList = new ArrayList<>();
+
+		    @Override
+		    public void add(T obj) {
+		        mList.add(obj);
+		    }
+
+		    @Override
+		    public void remove(T obj) {
+		        mList.remove(obj);
+		    }
+
+		    @Override
+		    public Iterator<T> iterator() {
+		        return new ConcreteIterator<>(mList);
+		    }
+		}
+
+	2.5 客户类
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Aggregate<String> list = new ConcreteAggregate<>();
+		        list.add("Android");
+		        list.add("Java");
+		        list.add("C");
+
+		        Iterator<String> iterator = list.iterator();
+		        while (iterator.hasNext()){
+		            String data = iterator.next();
+		            System.out.println(data);
+		        }
+		    }
+		}
