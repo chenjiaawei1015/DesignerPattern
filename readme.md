@@ -1251,3 +1251,158 @@
 		        template.execute();
 		    }
 		}
+
+## demo15 访问者模式 ##
+
+![](https://i.imgur.com/VUOWtyi.png)
+
+1. 角色介绍
+
+	Visitor -- 接口或者抽象类,定义了对每一个元素(Element)访问的行为,它的参数就是可以访问的元素,它的方法个数理论上来讲与元素的个数是一致的,因此,访问者模式要求元素的类族要稳定,如果经常添加删除元素类,必然会导致频繁的修改Visitor接口,这种时候,不宜使用访问者模式
+
+	ConcreteVisitor -- 具体的访问者,它需要给出对每一个元素类访问时所产生的具体行为
+
+	Element -- 元素接口或者抽象类,它定义了一个接受访问者(Visitor)的方法,其意义是指向每一个元素都要可以被访问
+
+	ConcreteElement -- 具体的元素类,它提供了接受访问方法的具体实现,而这个具体的实现通常情况下是使用访问者提供的访问该元素的方法
+
+2. 案例代码
+
+	场景: 员工分为工程师和经理,评定员工的分别为CEO和CTO,假如CTO只关注工程师的代码量及经理的新产品数量,而CEO关注的是工程师的KPI和经理的KPI以及新产品数量
+
+		/**
+		 * 员工基类
+		 */
+		public abstract class Staff {
+
+		    public String name;
+		    public int kpi;
+
+		    public Staff(String name) {
+		        this.name = name;
+		        this.kpi = RandomUtils.getInt(10);
+		    }
+
+		    // 接受Visitor的访问
+		    public abstract void accept(Visitor visitor);
+		}
+
+		public class Engineer extends Staff {
+
+		    public Engineer(String name) {
+		        super(name);
+		    }
+
+		    @Override
+		    public void accept(Visitor visitor) {
+		        visitor.visit(this);
+		    }
+
+		    public int getCodeLines() {
+		        return RandomUtils.getInt(1000);
+		    }
+		}
+
+		public class Manager extends Staff {
+
+		    private int products;
+
+		    public Manager(String name) {
+		        super(name);
+		        products = RandomUtils.getInt(10);
+		    }
+
+		    @Override
+		    public void accept(Visitor visitor) {
+		        visitor.visit(this);
+		    }
+
+		    public int getProducts() {
+		        return products;
+		    }
+		}
+
+		public interface Visitor {
+
+		    void visit(Engineer engineer);
+
+		    void visit(Manager manager);
+		}
+
+		/**
+		 * CTO 关注代码数量和产品数量
+		 */
+		public class CTOVisitor implements Visitor {
+
+		    @Override
+		    public void visit(Engineer engineer) {
+		        System.out.println(engineer.name + " codes = " + engineer.getCodeLines());
+		    }
+
+		    @Override
+		    public void visit(Manager manager) {
+		        System.out.println(manager.name + " products = " + manager.getProducts());
+		    }
+		}
+
+		/**
+		 * CEO 只关注业绩
+		 */
+		public class CEOVisitor implements Visitor {
+
+		    @Override
+		    public void visit(Engineer engineer) {
+		        System.out.println(engineer.name + " kpi = " + engineer.kpi);
+		    }
+
+		    @Override
+		    public void visit(Manager manager) {
+		        System.out.println(manager.name + " kpi = " + manager.kpi);
+		    }
+		}
+
+		public class BusinessReport {
+
+		    List<Staff> mStaffList = new ArrayList<>();
+
+		    public BusinessReport() {
+		        mStaffList.add(new Manager("经理A"));
+		        mStaffList.add(new Engineer("工程师A"));
+		        mStaffList.add(new Engineer("工程师B"));
+		        mStaffList.add(new Engineer("工程师C"));
+		    }
+
+		    // 为访问者展示报表
+		    public void showReport(Visitor visitor) {
+		        for (Staff staff : mStaffList) {
+		            staff.accept(visitor);
+		        }
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        BusinessReport report = new BusinessReport();
+
+		        System.out.println("CEO 可见");
+		        report.showReport(new CEOVisitor());
+
+		        System.out.println("CTO 可见");
+		        report.showReport(new CTOVisitor());
+
+		        // 输出:
+		        // CEO 可见
+		        // 经理A kpi = 0
+		        // 工程师A kpi = 6
+		        // 工程师B kpi = 2
+		        // 工程师C kpi = 4
+		        // CTO 可见
+		        // 经理A products = 7
+		        // 工程师A codes = 695
+		        // 工程师B codes = 537
+		        // 工程师C codes = 461
+		    }
+		}
+
+
