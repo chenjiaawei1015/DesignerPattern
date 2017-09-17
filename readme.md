@@ -1995,3 +1995,19 @@
 		        phone.handup();
 		    }
 		}
+
+## demo23 桥接模式 ##
+
+![](https://i.imgur.com/EvBzhUD.png)
+
+1. 角色介绍
+
+	Abstraction -- 抽象部分.这个类保持一个与实现部分对象的引用,抽象部分中的方法需要调用实现部分的对象来实现,这个类一般为抽象类
+
+	RefinedAbstraction -- 优化的抽象部分.一般是对抽象部分的方法进行完善和扩展
+
+	Implementor -- 实现部分,其方法不一定要与抽象部分中的一致,一般情况下是由实现部分提供基础操作,而抽象部分定义的是基于实现部分这些基本操作的业务方法
+
+	ConcreteImplementor -- 实现部分
+
+	Client -- 客户类
