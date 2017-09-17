@@ -1893,3 +1893,15 @@
 		        cloth.dressed();
 		    }
 		}
+
+## demo21 享元模式 ##
+
+![](https://i.imgur.com/oZlDC1q.png)
+
+1. 角色介绍
+
+	Flyweight -- 享元对象抽象基类或接口
+
+	ConcreteFlyweight -- 具体的享元对象
+
+	FlyweightFactory -- 享元工厂
