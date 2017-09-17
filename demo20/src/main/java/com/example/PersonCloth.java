@@ -1,0 +1,16 @@
+package com.example;
+
+
+public abstract class PersonCloth extends Person {
+
+    protected Person mPerson;
+
+    public PersonCloth(Person person) {
+        mPerson = person;
+    }
+
+    @Override
+    public void dressed() {
+        mPerson.dressed();
+    }
+}

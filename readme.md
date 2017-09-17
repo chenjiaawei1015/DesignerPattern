@@ -1822,3 +1822,74 @@
 		        System.out.println(adapter.getVolt5());
 		    }
 		}
+
+## demo20 装饰模式 ##
+
+![](https://i.imgur.com/yyBRk4X.png)
+
+1. 角色介绍
+
+	Component -- 抽象组件,被装饰的原始对象
+
+	ConcreteComponent -- 组件具体实现类
+
+	Decorator -- 抽象装饰者.其内部一定要有一个指向组件对象的引用
+
+	ConcreteDecorator -- 装饰者具体实现类
+
+	Client -- 客户类
+
+2. 示例代码
+
+		public abstract class Person {
+
+		    public abstract void dressed();
+		}
+
+		public class Boy extends Person {
+
+		    @Override
+		    public void dressed() {
+		        System.out.println("boy dressed");
+		    }
+		}
+
+		public abstract class PersonCloth extends Person {
+
+		    protected Person mPerson;
+
+		    public PersonCloth(Person person) {
+		        mPerson = person;
+		    }
+
+		    @Override
+		    public void dressed() {
+		        mPerson.dressed();
+		    }
+		}
+
+		public class CheapCloth extends PersonCloth {
+
+		    public CheapCloth(Person person) {
+		        super(person);
+		    }
+
+		    public void dressShorts() {
+		        System.out.println("dressShorts");
+		    }
+
+		    @Override
+		    public void dressed() {
+		        super.dressed();
+		        dressShorts();
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        Person person = new Boy();
+		        PersonCloth cloth = new CheapCloth(person);
+		        cloth.dressed();
+		    }
+		}
