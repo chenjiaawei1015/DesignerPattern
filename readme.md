@@ -1557,3 +1557,223 @@
 		        proxySubject.visit();
 		    }
 		}
+
+## demo18 组合模式 ##
+
+![](https://i.imgur.com/iLeL46v.png)
+
+1. 角色介绍
+
+	Component -- 抽象根节点,为组合中的对象声明接口.在适当的情况下,实现所有类共有接口的缺省行为.声明一个接口用于访问和管理 Component 的子节点.可在递归中定义一个接口,用于访问一个父节点,并在合适的情况下实现它
+
+	Composite -- 定义有子节点的那些枝干节点的行为,存储子节点,在 Component 接口中实现与子节点有关的操作
+
+	Leaf -- 在组合中表示叶子节点对象,叶子节点没有子节点,在组合中定义节点对象的行为.
+
+	Client -- 通过 Component 接口操纵组合节点的对象
+
+2. 代码实现
+
+	2.1 安全组合模式
+
+		/**
+		 * 抽象根节点
+		 */
+		public abstract class Component {
+
+		    // 节点名
+		    protected String name;
+
+		    public Component(String name) {
+		        this.name = name;
+		    }
+
+		    public abstract void doSomeThing();
+		}
+
+		/**
+		 * 具体的枝干接点
+		 */
+		public class Composite extends Component {
+
+		    private List<Component> mComponentList = new ArrayList<>();
+
+		    public Composite(String name) {
+		        super(name);
+		    }
+
+		    @Override
+		    public void doSomeThing() {
+		        System.out.println(name);
+		        for (Component component : mComponentList) {
+		            component.doSomeThing();
+		        }
+		    }
+
+		    public void addChild(Component child) {
+		        mComponentList.add(child);
+		    }
+
+		    public void removeChild(Component child) {
+		        mComponentList.remove(child);
+		    }
+
+		    public Component getChild(int index) {
+		        return mComponentList.get(index);
+		    }
+		}
+
+		/**
+		 * 具体的叶子节点
+		 */
+		public class Leaf extends Component {
+
+		    public Leaf(String name) {
+		        super(name);
+		    }
+
+		    @Override
+		    public void doSomeThing() {
+		        System.out.println(name);
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        // 构造根节点
+		        Composite root = new Composite("root");
+
+		        // 构造两个枝干节点
+		        Composite branch1 = new Composite("branch1");
+		        Composite branch2 = new Composite("branch2");
+
+		        // 构造两个叶子节点
+		        Leaf leaf1 = new Leaf("leaf1");
+		        Leaf leaf2 = new Leaf("leaf2");
+
+		        // 叶子节点添加到枝干节点
+		        branch1.addChild(leaf1);
+		        branch2.addChild(leaf2);
+
+		        // 枝干节点添加到根节点
+		        root.addChild(branch1);
+		        root.addChild(branch2);
+
+		        root.doSomeThing();
+		    }
+		}
+
+	2.2 透明组合模式
+
+		/**
+		 * 抽象根节点
+		 */
+		public abstract class Component {
+
+		    // 节点名
+		    protected String name;
+
+		    public Component(String name) {
+		        this.name = name;
+		    }
+
+		    public abstract void doSomeThing();
+
+		    public abstract void addChild(Component child);
+
+		    public abstract void removeChild(Component child);
+
+		    public abstract Component getChild(int index);
+		}
+
+		/**
+		 * 具体的枝干接点
+		 */
+		public class Composite extends Component {
+
+		    private List<Component> mComponentList = new ArrayList<>();
+
+		    public Composite(String name) {
+		        super(name);
+		    }
+
+		    @Override
+		    public void doSomeThing() {
+		        System.out.println(name);
+		        for (Component component : mComponentList) {
+		            component.doSomeThing();
+		        }
+		    }
+
+		    @Override
+		    public void addChild(Component child) {
+		        mComponentList.add(child);
+		    }
+
+		    @Override
+		    public void removeChild(Component child) {
+		        mComponentList.remove(child);
+		    }
+
+		    @Override
+		    public Component getChild(int index) {
+		        return mComponentList.get(index);
+		    }
+		}
+
+		/**
+		 * 具体的叶子节点
+		 */
+		public class Leaf extends Component {
+
+		    public Leaf(String name) {
+		        super(name);
+		    }
+
+		    @Override
+		    public void doSomeThing() {
+		        System.out.println(name);
+		    }
+
+		    @Override
+		    public void addChild(Component child) {
+		        throw new RuntimeException("叶子节点没有子节点");
+		    }
+
+		    @Override
+		    public void removeChild(Component child) {
+		        throw new RuntimeException("叶子节点没有子节点");
+		    }
+
+		    @Override
+		    public Component getChild(int index) {
+		        throw new RuntimeException("叶子节点没有子节点");
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        // 构造根节点
+		        Component root = new Composite("root");
+
+		        // 构造两个枝干节点
+		        Component branch1 = new Composite("branch1");
+		        Component branch2 = new Composite("branch2");
+
+		        // 构造两个叶子节点
+		        Component leaf1 = new Leaf("leaf1");
+		        Component leaf2 = new Leaf("leaf2");
+
+		        // 叶子节点添加到枝干节点
+		        branch1.addChild(leaf1);
+		        branch2.addChild(leaf2);
+
+		        // 枝干节点添加到根节点
+		        root.addChild(branch1);
+		        root.addChild(branch2);
+
+		        root.doSomeThing();
+		    }
+		}
