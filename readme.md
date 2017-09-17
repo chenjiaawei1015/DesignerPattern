@@ -1905,3 +1905,93 @@
 	ConcreteFlyweight -- 具体的享元对象
 
 	FlyweightFactory -- 享元工厂
+
+## demo22 外观模式 ##
+
+![](https://i.imgur.com/eFE9zO7.png)
+
+1. 角色介绍
+
+	Facade -- 系统对外的统一接口
+
+2. 简单示例
+
+		public interface Phone {
+
+		    void call();
+
+		    void hangup();
+		}
+
+		public class PhoneImpl implements Phone {
+
+		    @Override
+		    public void call() {
+		        System.out.println("call");
+		    }
+
+		    @Override
+		    public void hangup() {
+		        System.out.println("hangup");
+		    }
+		}
+
+		public interface Camera {
+
+		    void open();
+
+		    void takePicture();
+
+		    void close();
+		}
+
+		public class CameraImpl implements Camera {
+		    @Override
+		    public void open() {
+		        System.out.println("open");
+		    }
+
+		    @Override
+		    public void takePicture() {
+		        System.out.println("takePicture");
+		    }
+
+		    @Override
+		    public void close() {
+		        System.out.println("close");
+		    }
+		}
+
+		public class MobilePhone {
+
+		    private Phone mPhone = new PhoneImpl();
+		    private Camera mCamera = new CameraImpl();
+
+		    public void call() {
+		        mPhone.call();
+		    }
+
+		    public void handup() {
+		        mPhone.hangup();
+		    }
+
+		    public void takePicture() {
+		        mCamera.open();
+		        mCamera.takePicture();
+		    }
+
+		    public void closeCamera() {
+		        mCamera.close();
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        MobilePhone phone = new MobilePhone();
+		        phone.call();
+		        phone.takePicture();
+		        phone.closeCamera();
+		        phone.handup();
+		    }
+		}
