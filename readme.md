@@ -1777,3 +1777,48 @@
 		        root.doSomeThing();
 		    }
 		}
+
+## demo19 适配器模式 ##
+
+![](https://i.imgur.com/xDBPGhj.png)
+
+1. 角色介绍
+
+	Target -- 目标角色,也就是所期待得到的接口
+
+	Adaptee -- 需要适配的接口
+
+	Adapter -- 适配器角色.把源接口转换为目标接口
+
+2. 代码
+
+		// Target 角色
+		public interface FiveVolt {
+
+		    int getVolt5();
+		}
+
+		// Adaptee 角色,被转换的对象
+		public class Volt220 {
+
+		    public int getVolt220() {
+		        return 220;
+		    }
+		}
+
+		// Adapter 角色,将220v转换为5v
+		public class VoltAdapter extends Volt220 implements FiveVolt {
+
+		    @Override
+		    public int getVolt5() {
+		        return 5;
+		    }
+		}
+
+		public class Client {
+
+		    public static void main(String[] args) {
+		        VoltAdapter adapter = new VoltAdapter();
+		        System.out.println(adapter.getVolt5());
+		    }
+		}
